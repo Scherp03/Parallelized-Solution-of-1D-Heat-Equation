@@ -2,7 +2,8 @@
 #include <fstream>
 #include <cmath>
 #include <vector>
-#include <chrono>
+#include <omp.h>
+#include <stdio.h>
 
 // parameters
 const int T = 50000;         // # of time steps
@@ -18,14 +19,7 @@ int main() {
     std::vector<double> u(N+1);
     std::vector<double> u_new(N+1);
 
-    // simple initialization
-    // all at 0 except for the middle point
-    // for (int i = 0; i < N; ++i) {
-    //     u[i] = 0.0;
-    // }
-    // u[N / 2] = 100.0; // hot spot in the middle
-
-    // triangle initialization as the example in "G.D. Smith" book (chapter 2)
+    // distributed initialization as the example in "G.D. Smith" book (chapter 2)
     for (int i = 0; i <= N; ++i) {
         double x = i * dx;
         if (x <= 0.5)
@@ -42,7 +36,7 @@ int main() {
     }
     out_t.close();
 
-    auto start = std::chrono::high_resolution_clock::now();
+    double start_time = omp_get_wtime();
 
     // temporal diffusion
     for (int t = 0; t < T; ++t) {
@@ -51,6 +45,10 @@ int main() {
         u_new[N - 1] = 0.0;
 
         // FTCS (forward time, central space) on internal points
+        // no need for private(...) or shared(...)
+        // i is the loop variable (automatically private)
+        // u and u_new are accessed safely by threads at different positions
+        #pragma omp parallel for schedule(static)
         for (int i = 1; i < N - 1; ++i) {
             u_new[i] = u[i] + r * (u[i+1] - 2*u[i] + u[i-1]);
         }
@@ -61,10 +59,9 @@ int main() {
         }
     }
 
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> duration = end - start;
-
-    std::cout << "Execution time: " << duration.count() << " seconds\n";
+    double end_time = omp_get_wtime();
+    std::cout << "Threads: " << omp_get_max_threads() << "\n";
+    std::cout << "Execution time: " << (end_time - start_time) << " seconds\n";
 
     // write output to a csv file (x, u[i]) = (position x, temperature at x)
     std::ofstream out("final_temp_seq.csv"); 
@@ -78,3 +75,9 @@ int main() {
     return 0;
 }
 
+// export OMP_NUM_THREADS=1
+// ./omp
+// export OMP_NUM_THREADS=2
+// ./omp
+// export OMP_NUM_THREADS=4
+// ./omp
