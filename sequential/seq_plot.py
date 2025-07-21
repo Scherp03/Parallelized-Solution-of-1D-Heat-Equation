@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-data = np.loadtxt("temp_distribution.csv", delimiter=",")
+data = np.loadtxt("init_temp_seq.csv", delimiter=",")
 
 x = data[:, 0]  
 u = data[:, 1] 
@@ -14,7 +14,7 @@ plt.grid(True)
 plt.legend()
 plt.show()
 
-data = np.loadtxt("seq_output.csv", delimiter=",")
+data = np.loadtxt("final_temp_seq.csv", delimiter=",")
 
 x = data[:, 0]  
 u = data[:, 1] 

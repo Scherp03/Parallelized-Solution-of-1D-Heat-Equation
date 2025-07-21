@@ -32,7 +32,7 @@ int main() {
     }
 
     // write temperature distribution to a csv file (x, u[i]) = (position x, temperature at x)
-    std::ofstream out_t("temp_distribution.csv"); 
+    std::ofstream out_t("init_temp_seq.csv"); 
     for (int i = 0; i < N; ++i) {
         double x = i * dx;
         out_t << x << "," << u[i] << "\n";
@@ -57,7 +57,7 @@ int main() {
     }
 
     // write output to a csv file (x, u[i]) = (position x, temperature at x)
-    std::ofstream out("seq_output.csv"); 
+    std::ofstream out("final_temp_seq.csv"); 
     for (int i = 0; i < N; ++i) {
         double x = i * dx;
         out << x << "," << u[i] << "\n";
