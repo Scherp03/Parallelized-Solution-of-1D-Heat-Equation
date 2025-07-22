@@ -5,8 +5,8 @@
 #include <chrono>
 
 // parameters
-const int T = 50000;         // # of time steps
-const int N = 10000;            // # of spatial points in the rod 
+const int T = 500;         // # of time steps
+const int N = 100;            // # of spatial points in the rod 
 const double alpha = 0.01;    // thermic diffusivity
 const double dx = 1.0 / N;       // spatial space (distance between two points along the rod, i.e. 0.01)
 const double dt = 0.4 * dx * dx / alpha;        // temporal space (time of simulation step), 0.4 is used for stabilty according to the "G.D. Smith" book (chapter 5)
@@ -23,7 +23,7 @@ int main() {
     // for (int i = 0; i < N; ++i) {
     //     u[i] = 0.0;
     // }
-    // u[N / 2] = 100.0; // hot spot in the middle
+    // u[N / 2] = 1.0; // hot spot in the middle
 
     // triangle initialization as the example in "G.D. Smith" book (chapter 2)
     for (int i = 0; i <= N; ++i) {
@@ -56,15 +56,18 @@ int main() {
         }
 
         // copy of u_new in u for the next step
-        for (int i = 0; i < N; ++i) {
-            u[i] = u_new[i];
-        }
+        // for (int i = 0; i < N; ++i) {
+        //     u[i] = u_new[i];
+        // }
+
+        // directly swap pointers, more efficient then copying in for loop
+        std::swap(u, u_new);
     }
 
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> duration = end - start;
 
-    std::cout << "Execution time: " << duration.count() << " seconds\n";
+    std::cout << "Execution time: " << duration.count() << " seconds" << std::endl;
 
     // write output to a csv file (x, u[i]) = (position x, temperature at x)
     std::ofstream out("final_temp_seq.csv"); 
@@ -74,7 +77,7 @@ int main() {
     }
     out.close();
 
-    std::cout << "\nFinished \n";
+    std::cout << "\nFinished" << std::endl;
     return 0;
 }
 

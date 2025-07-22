@@ -6,8 +6,8 @@
 #include <stdio.h>
 
 // parameters
-const int T = 50000;         // # of time steps
-const int N = 10000;            // # of spatial points in the rod 
+const int T = 500;         // # of time steps
+const int N = 100;            // # of spatial points in the rod 
 const double alpha = 0.01;    // thermic diffusivity
 const double dx = 1.0 / N;       // spatial space (distance between two points along the rod, i.e. 0.01)
 const double dt = 0.4 * dx * dx / alpha;        // temporal space (time of simulation step), 0.4 is used for stabilty according to the "G.D. Smith" book (chapter 5)
@@ -16,6 +16,8 @@ const double dt = 0.4 * dx * dx / alpha;        // temporal space (time of simul
 const double r = alpha * dt / (dx * dx);
 
 int main() {
+    double start_time, end_time;
+
     std::vector<double> u(N+1);
     std::vector<double> u_new(N+1);
 
@@ -36,7 +38,7 @@ int main() {
     }
     out_t.close();
 
-    double start_time = omp_get_wtime();
+    start_time = omp_get_wtime();
 
     // temporal diffusion
     for (int t = 0; t < T; ++t) {
@@ -54,14 +56,15 @@ int main() {
         }
 
         // copy of u_new in u for the next step
+        #pragma omp parallel for schedule(static)
         for (int i = 0; i < N; ++i) {
             u[i] = u_new[i];
         }
     }
 
-    double end_time = omp_get_wtime();
+    end_time = omp_get_wtime();
     std::cout << "Threads: " << omp_get_max_threads() << "\n";
-    std::cout << "Execution time: " << (end_time - start_time) << " seconds\n";
+    std::cout << "Execution time: " << (end_time - start_time) << " seconds" << std::endl;
 
     // write output to a csv file (x, u[i]) = (position x, temperature at x)
     std::ofstream out("final_temp_seq.csv"); 
@@ -71,7 +74,7 @@ int main() {
     }
     out.close();
 
-    std::cout << "\nFinished \n";
+    std::cout << "\nFinished" << std::endl;;
     return 0;
 }
 
