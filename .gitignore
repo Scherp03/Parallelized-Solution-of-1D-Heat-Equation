@@ -1,3 +1,5 @@
 parallel_OpenMP/omp
 sequential/seq
 parallel_MPI/mpi
+.vscode
+jobs_test/
