@@ -3,18 +3,18 @@
 #PBS -o ./mpi_output.out
 #PBS -e ./mpi_error.err
 #PBS -q short_cpuQ
-#PBS -l walltime=02:00:00
-#PBS -l select=1:ncpus=32
-#PBS -l mem=10mb
+#PBS -l walltime=01:00:00
+#PBS -l select=1:ncpus=32:mem=10mb
 
 # load modules
 module load gcc91 || exit 1
+module load mpich-3.2.1--gcc-9.1.0 || exit 1
 
 # select working directory
-cd /home/luca.carpella/1DHeat/jobs || exit 1
+cd /home/luca.carpella/jobs || exit 1
 
 # compile
-mpicxx mpi.cpp -o mpi_exe
+mpicxx -std=c++11 mpi.cpp -o mpi_exe
 
 if [[ $? -ne 0 ]]; then
     echo "Compilation failed!"
@@ -25,8 +25,8 @@ fi
 PROCESS_NUM=(1 2 4 8 16 32)
 
 # try different values
-N_LIST=(10000 50000 100000)
-T_LIST=(1000 3000 5000)
+N_LIST=(100000 500000 1000000)
+T_LIST=(10000 30000 50000)
 
 for N in "${N_LIST[@]}"; do 
     for T in "${T_LIST[@]}"; do

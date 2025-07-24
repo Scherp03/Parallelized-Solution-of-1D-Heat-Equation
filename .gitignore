@@ -3,3 +3,9 @@ sequential/seq
 parallel_MPI/mpi
 .vscode
 jobs_test/
+parallel_OpenMP/temp_plot.py
+sequential/temp_plot.py
+parallel_MPI/temp_plot.py
+jobs/mpi_results
+jobs/omp_results
+jobs/seq_results

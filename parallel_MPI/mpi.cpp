@@ -104,8 +104,6 @@ int main(int argc, char** argv) {
     end_time = MPI_Wtime();
     double local_time = end_time - start_time;
 
-    std::cout << "Process " << rank << ", time: " << local_time << " seconds" << std::endl;
-
     // parameter and function to measure worst case time (end of code)
     double max_time;
     MPI_Reduce(&local_time, &max_time, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
