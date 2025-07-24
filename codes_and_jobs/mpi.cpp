@@ -44,12 +44,22 @@ int main(int argc, char** argv) {
     std::vector<double> u(local_N + 2);     
     std::vector<double> u_new(local_N + 2);
 
+
+    int start = rank * (N / size);            
+    int end = (rank + 1) * (N / size); 
+
     // simple initialization
-    for (int i = 0; i < N; ++i) {
+    for (int i = 0; i <= local_N; ++i) {
         u[i] = 0.0;
     }
-    u[N / 4] = 100.0; 
-    u[N/2] = 60.0;
+    if (N / 4 >= start && N / 4 < end) {
+        int local_index = (N / 4) - start;
+        u[local_index] = 100.0;
+    }
+    if (N / 2 >= start && N / 2 < end) {
+        int local_index = (N / 2) - start;
+        u[local_index] = 60.0;
+    }
 
     // distributed initialization 
     // each process initializes locally its portion

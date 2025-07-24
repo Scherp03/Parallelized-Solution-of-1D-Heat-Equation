@@ -4,13 +4,13 @@
 #PBS -e ./omp_error.err
 #PBS -q short_cpuQ
 #PBS -l walltime=01:00:00
-#PBS -l select=1:ncpus=32:mem=100mb
+#PBS -l select=1:ncpus=32:ompthreads=32:mem=100mb
 
 # load modules
 module load gcc91 || exit 1
 
 # select working directory
-cd /home/luca.carpella/jobs || exit 1
+cd /home/luca.carpella/codes_and_jobs || exit 1
 
 # compile
 g++ -std=c++11 -O2 -fopenmp omp.cpp -o omp_exe
@@ -34,7 +34,7 @@ for N in "${N_LIST[@]}"; do
             export OMP_NUM_THREADS=$threads  
 
             # run
-            ./omp_exe $N $T > "omp_results/output_omp_N${N}_T${T}.txt"
+            ./omp_exe $N $T $threads > "omp_results/output_omp_N${N}_T${T}.txt"
         done
     done
 done
