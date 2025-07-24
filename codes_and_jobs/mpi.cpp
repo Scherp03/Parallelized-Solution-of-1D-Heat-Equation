@@ -44,15 +44,22 @@ int main(int argc, char** argv) {
     std::vector<double> u(local_N + 2);     
     std::vector<double> u_new(local_N + 2);
 
+    // simple initialization
+    for (int i = 0; i < N; ++i) {
+        u[i] = 0.0;
+    }
+    u[N / 4] = 100.0; 
+    u[N/2] = 60.0;
+
     // distributed initialization 
     // each process initializes locally its portion
-    for (int i = 0; i <= local_N; ++i) {
-        double global_x = dx * (rank * local_N + (i - 1));
-        if (global_x <= 0.5)
-            u[i] = 2 * global_x;
-        else
-            u[i] = 2 * (1 - global_x);
-    }
+    // for (int i = 0; i <= local_N; ++i) {
+    //     double global_x = dx * (rank * local_N + (i - 1));
+    //     if (global_x <= 0.5)
+    //         u[i] = 2 * global_x;
+    //     else
+    //         u[i] = 2 * (1 - global_x);
+    // }
 
     // std::string file_name = "init_temp_seq" + std::to_string(rank) + ".txt";
 

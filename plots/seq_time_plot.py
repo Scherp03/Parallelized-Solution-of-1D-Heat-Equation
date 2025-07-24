@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-df = pd.read_csv("seq_out_results.csv", header=None, names=["N", "T", "time", "threads"])
+df = pd.read_csv("../codes_and_jobs/seq_out_results.csv", header=None, names=["N", "T", "time", "threads"])
 
 # Crea etichette tipo "N=100000, T=10000"
 df["label"] = df.apply(lambda row: f"N={row['N']}, T={row['T']}", axis=1)

@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-data = np.loadtxt("final_temp_mpi.csv", delimiter=",")
+data = np.loadtxt(".csv", delimiter=",")
 
 x = data[:, 0]  
 u = data[:, 1] 

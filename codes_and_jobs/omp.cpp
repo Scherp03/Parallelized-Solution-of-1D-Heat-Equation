@@ -27,14 +27,21 @@ int main(int argc, char** argv) {
     std::vector<double> u(N+1);
     std::vector<double> u_new(N+1);
 
-    // distributed initialization as the example in "G.D. Smith" book (chapter 2)
-    for (int i = 0; i <= N; ++i) {
-        double x = i * dx;
-        if (x <= 0.5)
-            u[i] = 2 * x;
-        else
-            u[i] = 2 * (1 - x);
+    // simple initialization
+    for (int i = 0; i < N; ++i) {
+        u[i] = 0.0;
     }
+    u[N / 4] = 100.0; 
+    u[N/2] = 60.0;
+
+    // distributed initialization as the example in "G.D. Smith" book (chapter 2)
+    //for (int i = 0; i <= N; ++i) {
+    //    double x = i * dx;
+    //    if (x <= 0.5)
+    //        u[i] = 2 * x;
+    //    else
+    //        u[i] = 2 * (1 - x);
+    //}
 
     // write temperature distribution to a csv file (x, u[i]) = (position x, temperature at x)
     // std::ofstream out_t("init_temp_omp.csv"); 
@@ -61,15 +68,12 @@ int main(int argc, char** argv) {
             u_new[i] = u[i] + r * (u[i+1] - 2*u[i] + u[i-1]);
         }
 
-        // copy of u_new in u for the next step
-        #pragma omp parallel for schedule(static)
-        for (int i = 0; i < N; ++i) {
-            u[i] = u_new[i];
-        }
+        // directly swap pointers, more efficient then copying in for loop
+        std::swap(u, u_new);
     }
 
     end_time = omp_get_wtime();
-    int threads = omp_get_max_threads();
+    int threads = omp_get_num_threads();
     double exec_time = (end_time - start_time);
     std::cout << "Threads: " << threads << std::endl;
     std::cout << "Execution time: " << exec_time << " seconds" << std::endl;
