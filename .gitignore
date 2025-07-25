@@ -9,5 +9,5 @@ parallel_MPI/temp_plot.py
 codes_and_jobs/mpi_results
 codes_and_jobs/omp_results
 codes_and_jobs/seq_results
-prova/
 plots/prova.py
+prove/

@@ -54,11 +54,11 @@ int main(int argc, char** argv) {
     }
     if (N / 4 >= start && N / 4 < end) {
         int local_index = (N / 4) - start;
-        u[local_index] = 100.0;
+        u[local_index + 1] = 100.0;
     }
     if (N / 2 >= start && N / 2 < end) {
         int local_index = (N / 2) - start;
-        u[local_index] = 60.0;
+        u[local_index + 1] = 60.0;
     }
 
     // distributed initialization 
@@ -142,17 +142,17 @@ int main(int argc, char** argv) {
             }
             std::vector<double> buffer(recv_N);
             MPI_Recv(buffer.data(), recv_N, MPI_DOUBLE, p, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            if (p == size -1 ) {
+            // if (p == size -1 ) {
                 for (int i = 0; i < recv_N; ++i) {
                     double x = dx * (p * (N / size) + i);
                     res << x << "," << buffer[i] << "\n";
                 }
-            } else {
-                for (int i = 0; i <= recv_N; ++i) {
-                    double x = dx * (p * (N / size) + i);
-                    res << x << "," << buffer[i] << "\n";
-                }
-            }
+            // } else {
+            //     for (int i = 0; i <= recv_N; ++i) {
+            //         double x = dx * (p * (N / size) + i);
+            //         res << x << "," << buffer[i] << "\n";
+            //     }
+            // }
         }
         res.close();
     } else {
