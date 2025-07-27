@@ -22,7 +22,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # list of processes
-PROCESS_NUM=(1 2 4 8 16 32)
+PROCESS_NUM=(2 4 8 16 32)
 
 # try different values
 N_LIST=(1000 5000 10000)
