@@ -21,12 +21,12 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # try different values
-N_LIST=(1000 5000 10000)
+N_LIST=(1000 10000 100000)
 T_LIST=(100000 500000 1000000)
 
 for N in "${N_LIST[@]}"; do 
     for T in "${T_LIST[@]}"; do
         # run
-        ./seq_exe $N $T > "seq_results/output_seq_N${N}_T${T}.txt"
+        ./seq_exe $N $T 
     done
 done

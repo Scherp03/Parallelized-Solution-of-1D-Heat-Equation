@@ -71,15 +71,6 @@ int main(int argc, char** argv) {
     //         u[i] = 2 * (1 - global_x);
     // }
 
-    // std::string file_name = "init_temp_seq" + std::to_string(rank) + ".txt";
-
-    // std::ofstream out_t(file_name); 
-    // for (int i = 0; i < N; ++i) {
-    //     double x = i * dx;
-    //     out_t << x << "," << u[i] << "\n";
-    // }
-    // out_t.close();
-
     start_time = MPI_Wtime();
 
     for (int t = 0; t < T; ++t) {
@@ -168,11 +159,6 @@ int main(int argc, char** argv) {
         std::ofstream out("mpi_out_results.csv", std::ios::app); 
         out << N << "," << T << "," << max_time << "," << size << "\n";
         out.close();
-
-        std::cout << "\nTotal processes: " << size << std::endl;
-        std::cout << "\nMax time (worst case): " << max_time << " seconds" << std::endl;
-        std::cout << "\nN = " << N << std::endl;
-        std::cout << "T = " << T << std::endl;
     }
     return 0;
 }

@@ -1,0 +1,15 @@
+type,p,time
+seq,1,
+omp,2,
+omp,4,
+omp,8,
+omp,16,
+omp,32,
+mpi,2,
+mpi,4,
+mpi,8,
+mpi,16,
+mpi,32,
+
+
+

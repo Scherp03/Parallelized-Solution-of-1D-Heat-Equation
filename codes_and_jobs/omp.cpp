@@ -47,14 +47,6 @@ int main(int argc, char** argv) {
     //        u[i] = 2 * (1 - x);
     //}
 
-    // write temperature distribution to a csv file (x, u[i]) = (position x, temperature at x)
-    // std::ofstream out_t("init_temp_omp.csv"); 
-    // for (int i = 0; i < N; ++i) {
-    //     double x = i * dx;
-    //     out_t << x << "," << u[i] << "\n";
-    // }
-    // out_t.close();
-
     start_time = omp_get_wtime();
 
     int threads_used = 0;
@@ -77,17 +69,18 @@ int main(int argc, char** argv) {
             for (int i = 1; i < N - 1; ++i) {
                 u_new[i] = u[i] + r * (u[i+1] - 2*u[i] + u[i-1]);
             }
-        }
+        
+            // directly swap pointers, more efficient then copying in for loop
+            // executed by only one thread (implicit barrier)
+            #pragma omp single
+            std::swap(u, u_new);
 
-        // directly swap pointers, more efficient then copying in for loop
-        std::swap(u, u_new);
+        }
     }
 
     end_time = omp_get_wtime();
 
     double exec_time = (end_time - start_time);
-    std::cout << "Threads: " << threads_used << std::endl;
-    std::cout << "Execution time: " << exec_time << " seconds" << std::endl;
 
     // write output to a csv file (x, u[i]) = (position x, temperature at x)
     std::string filename = "omp_results/temp_omp_N" + std::to_string(N) + "_T" + std::to_string(T) + "_threads" + std::to_string(threads_used) + ".csv";
@@ -102,15 +95,6 @@ int main(int argc, char** argv) {
     std::ofstream out("omp_out_results.csv", std::ios::app); 
     out << N << "," << T << "," << exec_time << "," << threads_used << "\n";
     out.close();
-
-    std::cout << "\nN = " << N << std::endl;
-    std::cout << "T = " << T << std::endl;
+    
     return 0;
 }
-
-// export OMP_NUM_THREADS=1
-// ./omp
-// export OMP_NUM_THREADS=2
-// ./omp
-// export OMP_NUM_THREADS=4
-// ./omp

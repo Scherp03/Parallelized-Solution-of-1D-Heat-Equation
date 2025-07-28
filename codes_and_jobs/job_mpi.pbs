@@ -25,14 +25,14 @@ fi
 PROCESS_NUM=(2 4 8 16 32)
 
 # try different values
-N_LIST=(1000 5000 10000)
+N_LIST=(1000 10000 100000)
 T_LIST=(100000 500000 1000000)
 
 
 for N in "${N_LIST[@]}"; do 
     for T in "${T_LIST[@]}"; do
         for process in "${PROCESS_NUM[@]}"; do
-            mpirun -np $process ./mpi_exe $N $T > "mpi_results/output_mpi_N${N}_T${T}.txt"
+            mpirun -np $process ./mpi_exe $N $T 
         done
     done
 done

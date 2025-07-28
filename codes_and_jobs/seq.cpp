@@ -41,14 +41,6 @@ int main(int argc, char** argv) {
     //         u[i] = 2 * (1 - x);
     // }
 
-    // write temperature distribution to a csv file (x, u[i]) = (position x, temperature at x)
-    // std::ofstream out_t("init_temp_seq.csv"); 
-    // for (int i = 0; i < N; ++i) {
-    //     double x = i * dx;
-    //     out_t << x << "," << u[i] << "\n";
-    // }
-    // out_t.close();
-
     auto start = std::chrono::high_resolution_clock::now();
 
     // temporal diffusion
@@ -75,8 +67,6 @@ int main(int argc, char** argv) {
     std::chrono::duration<double> duration = end - start;
     double exec_time = duration.count();
 
-    std::cout << "Execution time: " << exec_time << " seconds" << std::endl;
-
     // write output to a csv file (x, u[i]) = (position x, temperature at x)
     std::string filename = "seq_results/temp_seq_N" + std::to_string(N) + "_T" + std::to_string(T) + ".csv";
     std::ofstream res(filename); 
@@ -91,8 +81,6 @@ int main(int argc, char** argv) {
     out << N << "," << T << "," << exec_time << "\n";
     out.close();
     
-    std::cout << "\nN = " << N << std::endl;
-    std::cout << "T = " << T << std::endl;
     return 0;
 }
 
