@@ -1,6 +1,3 @@
-parallel_OpenMP/
-sequential/
-parallel_MPI/
 .vscode
 jobs_test/
 parallel_OpenMP/temp_plot.py
@@ -10,4 +7,8 @@ codes_and_jobs/mpi_results
 codes_and_jobs/omp_results
 codes_and_jobs/seq_results
 plots/prova.py
+plots/time_comparison_no.py
 prove/
+codes_and_jobs_small_data/
+plots_small_data/
+scp.txt

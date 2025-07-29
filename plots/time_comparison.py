@@ -1,139 +1,109 @@
+# import pandas as pd
+# import matplotlib.pyplot as plt
+
+
+# seq_df = pd.read_csv("../codes_and_jobs/seq_out_results.csv", header=None, names=["N", "T", "Time"])
+# omp_df = pd.read_csv("../codes_and_jobs/omp_out_results.csv", header=None, names=["N", "T", "Time", "Threads"])
+# mpi_df = pd.read_csv("../codes_and_jobs/mpi_out_results.csv", header=None, names=["N", "T", "Time", "Processes"])
+
+# parallel_levels = [2, 4, 8, 16, 32]
+# T_list = [10000, 100000]
+# bar_width = 0.06
+
+
+# seq_grouped = seq_df.groupby(["N", "T"]).mean().reset_index()
+# omp_grouped = omp_df[omp_df["Threads"].isin(parallel_levels)].groupby(["N", "T", "Threads"]).mean().reset_index()
+# mpi_grouped = mpi_df[mpi_df["Processes"].isin(parallel_levels)].groupby(["N", "T", "Processes"]).mean().reset_index()
+
+
+# for T_val in T_list:
+#     seq_t = seq_grouped[seq_grouped["T"] == T_val]
+#     omp_t = omp_grouped[omp_grouped["T"] == T_val]
+#     mpi_t = mpi_grouped[mpi_grouped["T"] == T_val]
+
+#     Ns = seq_t["N"].tolist()
+#     x = list(range(len(Ns)))
+#     offset = -5 * bar_width
+
+#     plt.figure(figsize=(18, 6))
+
+#     # Sequential
+#     plt.bar([i + offset for i in x], seq_t["Time"], width=bar_width, label="Sequential")
+#     offset += bar_width
+
+#     # OMP
+#     for threads in parallel_levels:
+#         omp_sub = omp_t[omp_t["Threads"] == threads].set_index("N").reindex(Ns).reset_index()
+#         plt.bar([i + offset for i in x], omp_sub["Time"], width=bar_width, label=f"OMP ({threads} threads)")
+#         offset += bar_width
+
+#     # MPI
+#     for procs in parallel_levels:
+#         mpi_sub = mpi_t[mpi_t["Processes"] == procs].set_index("N").reindex(Ns).reset_index()
+#         plt.bar([i + offset for i in x], mpi_sub["Time"], width=bar_width, label=f"MPI ({procs} processes)")
+#         offset += bar_width
+
+
+#     plt.xticks(x, [str(n) for n in Ns], rotation=45)
+#     plt.xlabel("N (con T = {})".format(T_val))
+#     plt.ylabel("Execution time (s)")
+#     plt.title(f"Execution Time Comparison for N (T = {T_val})")
+#     plt.legend(ncol=2)
+#     plt.grid(True, axis='y')
+#     plt.tight_layout()
+#     plt.show()
+
+
+
 import pandas as pd
 import matplotlib.pyplot as plt
 
-
-# Caricamento dati
 seq_df = pd.read_csv("../codes_and_jobs/seq_out_results.csv", header=None, names=["N", "T", "Time"])
 omp_df = pd.read_csv("../codes_and_jobs/omp_out_results.csv", header=None, names=["N", "T", "Time", "Threads"])
 mpi_df = pd.read_csv("../codes_and_jobs/mpi_out_results.csv", header=None, names=["N", "T", "Time", "Processes"])
 
-# seq_grouped = seq_df.groupby(["N", "T"]).mean().reset_index()
-# omp_grouped2 = omp_df[omp_df["Threads"] == 2].groupby(["N", "T"]).mean().reset_index()
-# mpi_grouped2 = mpi_df[mpi_df["Processes"] == 2].groupby(["N", "T"]).mean().reset_index()
-# omp_grouped4 = omp_df[omp_df["Threads"] == 4].groupby(["N", "T"]).mean().reset_index()
-# mpi_grouped4 = mpi_df[mpi_df["Processes"] == 4].groupby(["N", "T"]).mean().reset_index()
-# omp_grouped8 = omp_df[omp_df["Threads"] == 8].groupby(["N", "T"]).mean().reset_index()
-# mpi_grouped8 = mpi_df[mpi_df["Processes"] == 8].groupby(["N", "T"]).mean().reset_index()
-
-# def make_labels(df):
-#     return df[["N", "T"]].astype(str).agg("x".join, axis=1)
-
-# labels = make_labels(seq_grouped)
-# x = range(len(labels))
-# bar_width = 0.25
-
-# plt.figure(figsize=(14, 6))
-# plt.bar([i - bar_width for i in x], seq_grouped["Time"], width=bar_width, label="Sequential")
-# plt.bar(x, omp_grouped2["Time"], width=bar_width, label="OMP (2 threads)")
-# plt.bar(x, omp_grouped8["Time"], width=bar_width, label="OMP (8 threads)")
-# plt.bar(x, omp_grouped4["Time"], width=bar_width, label="OMP (4 threads)")
-# plt.bar([i + bar_width for i in x], mpi_grouped2["Time"], width=bar_width, label="MPI (2 processes)")
-# plt.bar([i + bar_width for i in x], mpi_grouped4["Time"], width=bar_width, label="MPI (4 processes)")
-# plt.bar([i + bar_width for i in x], mpi_grouped8["Time"], width=bar_width, label="MPI (8 processes)")
-
-
-# plt.xticks(x, labels, rotation=45)
-# plt.xlabel("N x T")
-# plt.ylabel("Execution time (s)")
-# plt.title("Execution Time Comparison: Sequential vs OMP vs MPI")
-# plt.legend()
-# plt.grid(True, axis='y')
-# plt.tight_layout()
-# plt.show()
-
+parallel_levels = [2, 4, 8, 16, 32]
 
 seq_grouped = seq_df.groupby(["N", "T"]).mean().reset_index()
-omp_grouped2 = omp_df[omp_df["Threads"] == 2].groupby(["N", "T"]).mean().reset_index()
-omp_grouped4 = omp_df[omp_df["Threads"] == 4].groupby(["N", "T"]).mean().reset_index()
-omp_grouped8 = omp_df[omp_df["Threads"] == 8].groupby(["N", "T"]).mean().reset_index()
-mpi_grouped2 = mpi_df[mpi_df["Processes"] == 2].groupby(["N", "T"]).mean().reset_index()
-mpi_grouped4 = mpi_df[mpi_df["Processes"] == 4].groupby(["N", "T"]).mean().reset_index()
-mpi_grouped8 = mpi_df[mpi_df["Processes"] == 8].groupby(["N", "T"]).mean().reset_index()
+omp_grouped = omp_df[omp_df["Threads"].isin(parallel_levels)].groupby(["N", "T", "Threads"]).mean().reset_index()
+mpi_grouped = mpi_df[mpi_df["Processes"].isin(parallel_levels)].groupby(["N", "T", "Processes"]).mean().reset_index()
 
-def make_labels(df):
-    return df[["N", "T"]].astype(str).agg("x".join, axis=1)
+unique_N = sorted(seq_grouped["N"].unique())
+bar_width = 0.06
 
-labels = make_labels(seq_grouped)
-x = list(range(len(labels)))
-bar_width = 0.1
+for n_val in unique_N:
+    seq_n = seq_grouped[seq_grouped["N"] == n_val]
+    omp_n = omp_grouped[omp_grouped["N"] == n_val]
+    mpi_n = mpi_grouped[mpi_grouped["N"] == n_val]
 
-split_point = 4 
-indexes_1 = x[:split_point]
-indexes_2 = x[split_point:]
-labels_1 = labels[:split_point]
-labels_2 = labels[split_point:]
+    labels = seq_n["T"].astype(str).tolist()
+    x = list(range(len(labels)))
 
-def plot_execution_time(indexes, labels_subset, title):
-    plt.figure(figsize=(14, 6))
-    
-    plt.bar([i - 3*bar_width for i in indexes], seq_grouped.loc[indexes, "Time"], width=bar_width, label="Sequential")
-    plt.bar([i - 2*bar_width for i in indexes], omp_grouped2.loc[indexes, "Time"], width=bar_width, label="OMP (2 threads)")
-    plt.bar([i - 1*bar_width for i in indexes], omp_grouped4.loc[indexes, "Time"], width=bar_width, label="OMP (4 threads)")
-    plt.bar([i + 0*bar_width for i in indexes], omp_grouped8.loc[indexes, "Time"], width=bar_width, label="OMP (8 threads)")
-    plt.bar([i + 1*bar_width for i in indexes], mpi_grouped2.loc[indexes, "Time"], width=bar_width, label="MPI (2 processes)")
-    plt.bar([i + 2*bar_width for i in indexes], mpi_grouped4.loc[indexes, "Time"], width=bar_width, label="MPI (4 processes)")
-    plt.bar([i + 3*bar_width for i in indexes], mpi_grouped8.loc[indexes, "Time"], width=bar_width, label="MPI (8 processes)")
-    
-    plt.xticks(indexes, labels_subset, rotation=45)
-    plt.xlabel("N x T")
+    plt.figure(figsize=(18, 6))
+
+    offset = -5 * bar_width  
+
+    # Sequential
+    plt.bar([i + offset for i in x], seq_n["Time"], width=bar_width, label="Sequential")
+    offset += bar_width
+
+    # OMP 
+    for threads in parallel_levels:
+        omp_t = omp_n[omp_n["Threads"] == threads].set_index("T").reindex(seq_n["T"]).reset_index()
+        plt.bar([i + offset for i in x], omp_t["Time"], width=bar_width, label=f"OMP ({threads} threads)")
+        offset += bar_width
+
+    # MPI 
+    for procs in parallel_levels:
+        mpi_t = mpi_n[mpi_n["Processes"] == procs].set_index("T").reindex(seq_n["T"]).reset_index()
+        plt.bar([i + offset for i in x], mpi_t["Time"], width=bar_width, label=f"MPI ({procs} processes)")
+        offset += bar_width
+
+    plt.xticks(x, labels, rotation=45)
+    plt.xlabel(f"T")
     plt.ylabel("Execution time (s)")
-    plt.title(title)
-    plt.legend()
+    plt.title(f"Execution Time Comparison for T (N = {n_val})")
+    plt.legend(ncol=2)
     plt.grid(True, axis='y')
     plt.tight_layout()
     plt.show()
-
-plot_execution_time(indexes_1, labels_1, "Execution Time (First 4 couples of N x T)")
-
-plot_execution_time(indexes_2, labels_2, "Execution Time (Last 5 couples of N x T)")
-
-
-
-
-# 16 and 32 procs/threads
-
-seq_df = pd.read_csv("../codes_and_jobs/seq_out_results.csv", header=None, names=["N", "T", "Time"])
-omp_df = pd.read_csv("../codes_and_jobs/omp_out_results.csv", header=None, names=["N", "T", "Time", "Threads"])
-mpi_df = pd.read_csv("../codes_and_jobs/mpi_out_results.csv", header=None, names=["N", "T", "Time", "Processes"])
-
-
-seq_grouped = seq_df.groupby(["N", "T"]).mean().reset_index()
-omp_grouped16 = omp_df[omp_df["Threads"] == 16].groupby(["N", "T"]).mean().reset_index()
-omp_grouped32 = omp_df[omp_df["Threads"] == 32].groupby(["N", "T"]).mean().reset_index()
-mpi_grouped16 = mpi_df[mpi_df["Processes"] == 16].groupby(["N", "T"]).mean().reset_index()
-mpi_grouped32 = mpi_df[mpi_df["Processes"] == 32].groupby(["N", "T"]).mean().reset_index()
-
-def make_labels(df):
-    return df[["N", "T"]].astype(str).agg("x".join, axis=1)
-
-labels = make_labels(seq_grouped)
-x = list(range(len(labels)))
-bar_width = 0.1
-
-split_point = 4 
-indexes_1 = x[:split_point]
-indexes_2 = x[split_point:]
-labels_1 = labels[:split_point]
-labels_2 = labels[split_point:]
-
-def plot_execution_time(indexes, labels_subset, title):
-    plt.figure(figsize=(14, 6))
-    
-    plt.bar([i - 3*bar_width for i in indexes], seq_grouped.loc[indexes, "Time"], width=bar_width, label="Sequential")
-    plt.bar([i - 2*bar_width for i in indexes], omp_grouped16.loc[indexes, "Time"], width=bar_width, label="OMP (16 threads)")
-    plt.bar([i - 1*bar_width for i in indexes], omp_grouped32.loc[indexes, "Time"], width=bar_width, label="OMP (32 threads)")
-    plt.bar([i + 1*bar_width for i in indexes], mpi_grouped16.loc[indexes, "Time"], width=bar_width, label="MPI (16 processes)")
-    plt.bar([i + 2*bar_width for i in indexes], mpi_grouped32.loc[indexes, "Time"], width=bar_width, label="MPI (32 processes)")
-    
-    plt.xticks(indexes, labels_subset, rotation=45)
-    plt.xlabel("N x T")
-    plt.ylabel("Execution time (s)")
-    plt.title(title)
-    plt.legend()
-    plt.grid(True, axis='y')
-    plt.tight_layout()
-    plt.show()
-
-plot_execution_time(indexes_1, labels_1, "Execution Time (First 4 couples of N x T)")
-
-plot_execution_time(indexes_2, labels_2, "Execution Time (Last 5 couples of N x T)")
