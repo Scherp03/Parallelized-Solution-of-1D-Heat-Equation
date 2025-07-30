@@ -2,7 +2,7 @@
 
 ## Description
 
-This repo contains the collection of codes and results related to the project "Parallelized Solution of 1D Heat Equation". Here follow the instructions to replicate the results and graphs presented in the report.
+This repo contains the collection of codes and results related to the project "Parallelized Solution of 1D Heat Equation". Here are the instructions to replicate the results and graphs presented in the report.
 
 ## Environment setup
 

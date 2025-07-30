@@ -79,7 +79,7 @@ for n_val in unique_N:
     labels = seq_n["T"].astype(str).tolist()
     x = list(range(len(labels)))
 
-    plt.figure(figsize=(18, 6))
+    plt.figure(figsize=(12, 6))
 
     offset = -5 * bar_width  
 
