@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
     const int T = std::stoi(argv[2]);         // # of time steps
     const double alpha = 0.01;    // thermic diffusivity
     const double dx = 1.0 / N;       // spatial space (distance between two points along the rod, i.e. 0.01)
-    const double dt = 0.4 * dx * dx / alpha;        // temporal space (time of simulation step), 0.4 is used for stabilty according to the "G.D. Smith" book (chapter 5)
+    const double dt = 0.4 * dx * dx / alpha;        // temporal space (time of simulation step), 0.4 is used for stabilty according to the "G.D. Smith" book (chapter 2)
 
     // coefficient for FTCS
     const double r = alpha * dt / (dx * dx);
@@ -36,15 +36,6 @@ int main(int argc, char** argv) {
     }
     u[N / 4] = 100.0; 
     u[N / 2] = 60.0;
-
-    // distributed initialization as the example in "G.D. Smith" book (chapter 2)
-    //for (int i = 0; i <= N; ++i) {
-    //    double x = i * dx;
-    //    if (x <= 0.5)
-    //        u[i] = 2 * x;
-    //    else
-    //        u[i] = 2 * (1 - x);
-    //}
 
     start_time = omp_get_wtime();
 

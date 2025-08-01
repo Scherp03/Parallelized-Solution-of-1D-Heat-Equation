@@ -1,0 +1,38 @@
+#!/bin/bash
+#PBS -N heat1D_MPI_async
+#PBS -o ./mpi_async_output.out
+#PBS -e ./mpi_async_error.err
+#PBS -q short_cpuQ
+#PBS -l walltime=03:00:00
+#PBS -l select=1:ncpus=32:mem=100mb
+
+# load modules
+module load gcc91 || exit 1
+module load mpich-3.2.1--gcc-9.1.0 || exit 1
+
+# select working directory
+cd /home/luca.carpella/MPI_async || exit 1
+
+# compile
+mpicxx -std=c++11 mpi_async.cpp -o mpi_async_exe
+
+if [[ $? -ne 0 ]]; then
+    echo "Compilation failed!"
+    exit 1
+fi
+
+# list of processes
+PROCESS_NUM=(2 4 8 16 32)
+
+# try different values
+N_LIST=(100000 500000 1000000 5000000)
+T_LIST=(10000 100000)
+
+
+for N in "${N_LIST[@]}"; do 
+    for T in "${T_LIST[@]}"; do
+        for process in "${PROCESS_NUM[@]}"; do
+            mpirun -np $process ./mpi_async_exe $N $T 
+        done
+    done
+done

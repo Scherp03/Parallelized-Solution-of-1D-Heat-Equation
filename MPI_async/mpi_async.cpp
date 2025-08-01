@@ -61,28 +61,43 @@ int main(int argc, char** argv) {
 
     start_time = MPI_Wtime();
 
-    for (int t = 0; t < T; ++t) {
-        // communication with neighboring left process
-        if (rank > 0) {
-            MPI_Sendrecv(&u[1], 1, MPI_DOUBLE, rank - 1, 0,
-                         &u[0], 1, MPI_DOUBLE, rank - 1, 0,
-                         MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        } else {
-            u[0] = 0.0;
+    for (int t = 0; t < T; t++) {
+        bool left_neighbor = rank > 0;
+        bool right_neighbor = rank < size - 1;
+        MPI_Request req_send_left, req_send_right, req_recv_left, req_recv_right;
+
+        // asynchronous communication
+        if (left_neighbor) {
+            MPI_Isend(&u[1], 1, MPI_DOUBLE, rank - 1, 0, MPI_COMM_WORLD, &req_send_left);
+            MPI_Irecv(&u[0], 1, MPI_DOUBLE, rank - 1, 1, MPI_COMM_WORLD, &req_recv_left);
         }
-        // communication with neighboring right process
-        if (rank < size - 1) {
-            MPI_Sendrecv(&u[local_N], 1, MPI_DOUBLE, rank + 1, 0,
-                         &u[local_N + 1], 1, MPI_DOUBLE, rank + 1, 0,
-                         MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        } else {
-            u[local_N + 1] = 0.0;
+
+        if (right_neighbor) {
+            MPI_Isend(&u[local_N], 1, MPI_DOUBLE, rank + 1, 1, MPI_COMM_WORLD, &req_send_right);
+            MPI_Irecv(&u[local_N + 1], 1, MPI_DOUBLE, rank + 1, 0, MPI_COMM_WORLD, &req_recv_right);
         }
 
         // FTCS (forward time, central space) on internal points
-        // from 1 to local_N, 0 and local_N+1 are the external points
-        for (int i = 1; i <= local_N; ++i) {
+        // from 2 to local_N - 1, 1 and local_N are the border points, 0 and local_N+1 are the external points
+        for (int i = 2; i < local_N; ++i) {
             u_new[i] = u[i] + r * (u[i+1] - 2*u[i] + u[i-1]);
+        }
+
+        // wait for communication to complete
+        if (left_neighbor) {
+            MPI_Wait(&req_send_left, MPI_STATUS_IGNORE);
+            MPI_Wait(&req_recv_left, MPI_STATUS_IGNORE);
+        }
+
+        if (right_neighbor) {
+            MPI_Wait(&req_send_right, MPI_STATUS_IGNORE);
+            MPI_Wait(&req_recv_right, MPI_STATUS_IGNORE);
+        }
+
+        // compute boundary points
+        if (local_N >= 1) {
+            u_new[1] = u[1] + r * (u[2] - 2 * u[1] + u[0]);
+            u_new[local_N] = u[local_N] + r * (u[local_N + 1] - 2 * u[local_N] + u[local_N - 1]);
         }
 
         // fixed boundaries conditions
@@ -106,7 +121,7 @@ int main(int argc, char** argv) {
 
     // write to csv file at last process 0
     if (rank == 0) {
-        std::string filename = "mpi_results/temp_mpi_N" + std::to_string(N) + "_T" + std::to_string(T) + "_procs" + std::to_string(size) + ".csv";
+        std::string filename = "mpi_async_results/temp_mpi_async_N" + std::to_string(N) + "_T" + std::to_string(T) + "_procs" + std::to_string(size) + ".csv";
         std::ofstream res(filename); 
         // write data of process 0
         for (int i = 1; i <= local_N; ++i) {
@@ -144,7 +159,7 @@ int main(int argc, char** argv) {
     if (rank == 0) {
 
         // write data to csv file
-        std::ofstream out("mpi_out_results.csv", std::ios::app); 
+        std::ofstream out("mpi_async_out_results.csv", std::ios::app); 
         out << N << "," << T << "," << max_time << "," << size << "\n";
         out.close();
     }

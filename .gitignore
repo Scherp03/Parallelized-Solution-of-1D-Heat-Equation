@@ -12,3 +12,4 @@ prove/
 codes_and_jobs_small_data/
 plots_small_data/
 scp.txt
+MPI_async/temp_diffusion_plot.py
