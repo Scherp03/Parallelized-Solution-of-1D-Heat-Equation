@@ -3,31 +3,33 @@
 #PBS -o ./omp_output.out
 #PBS -e ./omp_error.err
 #PBS -q short_cpuQ
-#PBS -l walltime=01:00:00
+#PBS -l walltime=02:30:00
 #PBS -l select=1:ncpus=32:ompthreads=32:mem=100mb
 
 # load modules
 module load gcc91 || exit 1
 
 # select working directory
-cd /home/luca.carpella/codes_and_jobs || exit 1
+cd /home/luca.carpella/omp_schedule_test || exit 1
 
 # compile
-g++ -std=c++11 -O2 -fopenmp omp.cpp -o omp_exe
+g++ -std=c++11 -O2 -fopenmp omp_schedule.cpp -o omp_exe
 
 # fixed params
-N=1000
-T=100000
+N=1000000
+T=10000
 OUTPUT_FILE="omp_schedule_results.csv"
 
-echo "schedule,chunk,threads,time_sec" > $OUTPUT_FILE
+echo "schedule,chunk,threads,time" > $OUTPUT_FILE
 
 # testing chedules 
 schedules=("static" "dynamic" "guided")
-chunks=(0 10 100 1000) 
+chunks=(0 10 100 1000 10000) 
 
-# testing threads
-for threads in 1 2 4 8 16
+THREADS_NUM=(2 4 8 16)
+
+
+for threads in "${THREADS_NUM[@]}"
 do
     export OMP_NUM_THREADS=$threads
 

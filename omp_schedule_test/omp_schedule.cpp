@@ -1,12 +1,11 @@
 #include <iostream>
 #include <vector>
-#include <cmath>
 #include <omp.h>
 #include <string>
 
 int main(int argc, char* argv[]) {
     if (argc < 5) {
-        std::cerr << "Uso: " << argv[0] << " N T schedule chunk\n";
+        std::cerr << "Correct use: " << argv[0] << " N T schedule chunk\n";
         return 1;
     }
 
@@ -22,17 +21,21 @@ int main(int argc, char* argv[]) {
     else if (sched_type == "guided")
         omp_set_schedule(omp_sched_guided, chunk);
     else {
-        std::cerr << "Errore: tipo di schedule non valido\n";
+        std::cerr << "Error: schedule type not valid\n";
         return 1;
     }
 
-    std::vector<double> u(N, 0.0);
-    std::vector<double> u_new(N, 0.0);
+    std::vector<double> u(N+1);
+    std::vector<double> u_new(N-1);
 
-    const double dx = 1.0 / (N - 1);
-    const double dt = 0.4 * dx * dx;
-    const double r = dt / (dx * dx);
+    const double alpha = 0.01; 
+    const double dx = 1.0 / N;
+    const double dt = 0.4 * dx * dx / alpha;
+    const double r = alpha * dt / (dx * dx);
 
+    for (int i = 0; i < N; ++i) {
+        u[i] = 0.0;
+    }
     u[N / 4] = 100.0;
     u[N / 2] = 60.0;
 
@@ -47,9 +50,8 @@ int main(int argc, char* argv[]) {
             }
 
             #pragma omp single
-            {
-                std::swap(u, u_new);
-            }
+            std::swap(u, u_new);
+
         }
     }
 
