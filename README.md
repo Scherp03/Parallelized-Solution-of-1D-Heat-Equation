@@ -6,11 +6,12 @@ This repo contains the collection of codes and results related to the project "P
 
 ## Environment setup
 
-First clone this repo. Inside there are X folders and this **README.md**:
+First, clone this repo. Inside there are 5 folders and this **README.md**:
 
-- **codes_and_jobs**: contains the three C++ implementations, together with the PBS scripts to run the jobs in the cluster. Here you'll need to create 3 empty folders: seq_results, omp_results and mpi_results. These will contain the temperature distribution results.
+- **codes_and_jobs**: contains the three C++ implementations, together with the PBS scripts to run the jobs in the cluster. Here you'll need to create 3 empty folders: seq_results, omp_results, and mpi_results. These will contain the temperature distribution results.
 - **omp_schedule_test**: the files in this folder can be used if you want to try and test which configuration of the OMP's directive _schedule_ works best.
-- **plots**: contains the pythons codes to generate the graphs.
+- **MPI_async**: the files in this folder can be used if you want to try and test the MPI async implementation.
+- **plots**: contains the Python codes to generate the graphs.
 - **graphs**: contains the actual images used in both the report and the oral presentation.
 
 In order to replicate this project locally, you need to have access to the HPC cluster provided by the University of Trento, then log in either by being connected to the university Wi-Fi or by using the VPN.
@@ -44,7 +45,7 @@ qsub job_mpi.pbs
 
 All the jobs will run in the **short_cpuQ** queue.
 
-You can check the status of your jobs with:
+You can check anytime the status of your jobs with:
 
 ```
 qstat -u name.surname
@@ -90,7 +91,7 @@ Now use these commands to generate the graphs:
 
 - **Sequential times with different sizes**
   ```
-  python3 seq_time_plot.py
+  python3 seq_scaling.py
   ```
 - **OpenMP times with different threads and sizes**
   ```
@@ -100,17 +101,25 @@ Now use these commands to generate the graphs:
   ```
   python3 mpi_scaling.py
   ```
-- **Time comparison between sequential, OpenMP and MPI**
+- **Time comparison between sequential, OpenMP, and MPI**
   ```
   python3 time_comparison.py
   ```
-  **Speedup and efficiency of OpenMP and MPI**
+- **Speedup and efficiency of OpenMP and MPI**
   ```
   python3 speedup_efficiency.py
   ```
 - **Temperature distribution in the rod for all cases**
   ```
   python3 temp_diffusion.py
+  ```
+- **OpenMP scheduling strategies comparison**
+  ```
+  python3 omp_scheduling.py
+  ```
+- **MPI asynchronous VS synchronous**
+  ```
+  python3 mpi_sync_vs_async.py
   ```
 
 ## Conclusion
